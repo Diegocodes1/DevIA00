@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currículo — DevMentor AI</title>
+  <link rel="stylesheet" href="../assets/css/style.css?v=2" />
+  <link rel="stylesheet" href="../assets/css/components.css?v=2" />
+  <link rel="stylesheet" href="../assets/css/app.css?v=2" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <aside class="sidebar">
+      <a href="../index.html" class="brand">
+        <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+        DevMentor <span class="text-gradient">AI</span>
+      </a>
+      <nav class="sidebar-nav" aria-label="Navegação do app">
+        <a href="dashboard.html"><span class="icon">▣</span> Dashboard</a>
+        <a href="chat.html"><span class="icon">◐</span> Chat IA</a>
+        <a href="estudos.html"><span class="icon">◈</span> Plano de Estudos</a>
+        <a href="curriculo.html"><span class="icon">▤</span> Currículo</a>
+        <a href="entrevistas.html"><span class="icon">◎</span> Entrevistas</a>
+        <a href="perfil.html"><span class="icon">○</span> Perfil</a>
+      </nav>
+      <div class="sidebar-user" id="sidebarUser">
+        <span class="avatar" aria-hidden="true" id="sidebarAvatar">U</span>
+        <div><div class="name" id="sidebarName">Usuário</div><div class="role" id="sidebarRole">Carregando...</div></div>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <button class="menu-toggle" data-menu-toggle aria-label="Abrir menu"><span></span><span></span><span></span></button>
+        <strong>Análise de Currículo</strong>
+        <a href="login.html" data-logout class="btn btn-ghost btn-sm">Sair</a>
+      </header>
+
+      <div class="page-body">
+        <div class="page-header fade-up">
+          <h1>Analise seu currículo com IA</h1>
+          <p>Envie seu currículo em PDF e receba uma avaliação completa em segundos.</p>
+        </div>
+
+        <div class="card fade-up">
+          <label for="resumeFile" class="upload-zone" id="uploadZone">
+            <span class="upload-icon" aria-hidden="true">📄</span>
+            <p><strong>Clique para enviar</strong> ou arraste seu currículo aqui</p>
+            <p style="margin-top:4px;">Formatos aceitos: PDF · máx. 5MB</p>
+            <input type="file" id="resumeFile" accept="application/pdf" class="sr-only" />
+          </label>
+          <div id="fileChip" hidden></div>
+          <div style="display:flex; justify-content:flex-end; margin-top:18px;">
+            <button id="analyzeBtn" class="btn btn-primary" disabled>Analisar com IA ✨</button>
+          </div>
+        </div>
+
+        <!-- ===== RESULTADO ===== -->
+        <div id="resumeResult" class="card card-block fade-up" hidden>
+          <div style="display:flex; align-items:center; gap:28px; flex-wrap:wrap;">
+            <div class="score-ring" data-score="78">
+              <svg width="130" height="130" viewBox="0 0 130 130">
+                <defs>
+                  <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#3b82f6" />
+                    <stop offset="100%" stop-color="#22d3ee" />
+                  </linearGradient>
+                </defs>
+                <circle class="track" cx="65" cy="65" r="55"></circle>
+                <circle class="fill" cx="65" cy="65" r="55"></circle>
+              </svg>
+              <div class="score-value"><strong class="value">78</strong><small>de 100</small></div>
+            </div>
+            <div>
+              <h3 style="margin-bottom:6px;">Boa base, com espaço para melhorar</h3>
+              <p class="text-muted">Seu currículo comunica bem sua experiência, mas pode ficar mais competitivo para sistemas ATS com alguns ajustes.</p>
+            </div>
+          </div>
+
+          <div class="result-columns">
+            <div>
+              <h4 style="margin-bottom:12px;">✅ Pontos fortes</h4>
+              <div class="point-list">
+                <div class="point-item strong"><span class="dot-mark"></span>Projetos práticos bem descritos, com tecnologias claras.</div>
+                <div class="point-item strong"><span class="dot-mark"></span>Formatação limpa e fácil de ler.</div>
+                <div class="point-item strong"><span class="dot-mark"></span>Link do GitHub e LinkedIn presentes.</div>
+              </div>
+            </div>
+            <div>
+              <h4 style="margin-bottom:12px;">⚠️ Pontos a melhorar</h4>
+              <div class="point-list">
+                <div class="point-item weak"><span class="dot-mark"></span>Faltam palavras-chave como "API REST" e "versionamento Git".</div>
+                <div class="point-item weak"><span class="dot-mark"></span>Resumo profissional muito genérico.</div>
+                <div class="point-item weak"><span class="dot-mark"></span>Nenhum resultado quantificado (ex: "reduziu tempo de carregamento em 30%").</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-block">
+            <h4 style="margin-bottom:10px;">💡 Sugestões de melhoria</h4>
+            <div class="point-list">
+              <div class="point-item"><span class="dot-mark" style="background:var(--primary-glow);"></span>Adicione um resumo profissional de 2-3 linhas destacando seu foco (ex: front-end com React).</div>
+              <div class="point-item"><span class="dot-mark" style="background:var(--primary-glow);"></span>Inclua números sempre que possível: performance, usuários, tempo economizado.</div>
+              <div class="point-item"><span class="dot-mark" style="background:var(--primary-glow);"></span>Use palavras-chave da vaga desejada para passar por filtros automáticos (ATS).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script type="module" src="../assets/firebase-init.js"></script>
+<script type="module" src="../utils/authGuard.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/curriculo.js"></script>
+  <script type="module" src="../assets/session.js"></script>
+</body>
+</html>
+

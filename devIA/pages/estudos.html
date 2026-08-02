@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plano de Estudos — DevMentor AI</title>
+  <link rel="stylesheet" href="../assets/css/style.css?v=2" />
+  <link rel="stylesheet" href="../assets/css/components.css?v=2" />
+  <link rel="stylesheet" href="../assets/css/app.css?v=2" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <aside class="sidebar">
+      <a href="../index.html" class="brand">
+        <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+        DevMentor <span class="text-gradient">AI</span>
+      </a>
+      <nav class="sidebar-nav" aria-label="Navegação do app">
+        <a href="dashboard.html"><span class="icon">▣</span> Dashboard</a>
+        <a href="chat.html"><span class="icon">◐</span> Chat IA</a>
+        <a href="estudos.html"><span class="icon">◈</span> Plano de Estudos</a>
+        <a href="curriculo.html"><span class="icon">▤</span> Currículo</a>
+        <a href="entrevistas.html"><span class="icon">◎</span> Entrevistas</a>
+        <a href="perfil.html"><span class="icon">○</span> Perfil</a>
+      </nav>
+     <div class="sidebar-user" id="sidebarUser">
+  <span class="avatar" aria-hidden="true" id="sidebarAvatar">U</span>
+  <div><div class="name" id="sidebarName">Usuário</div><div class="role" id="sidebarRole">Carregando...</div></div>
+</div>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <button class="menu-toggle" data-menu-toggle aria-label="Abrir menu"><span></span><span></span><span></span></button>
+        <strong>Plano de Estudos</strong>
+        <a href="login.html" data-logout class="btn btn-ghost btn-sm">Sair</a>
+      </header>
+
+      <div class="page-body">
+        <div class="page-header fade-up">
+          <h1>Monte seu plano de estudos</h1>
+          <p>Responda 3 passos rápidos e a IA gera um cronograma completo para você.</p>
+        </div>
+
+        <!-- ===== FORMULÁRIO ===== -->
+        <form id="studyForm" class="card fade-up">
+          <div class="stepper">
+            <div class="step active" data-step-indicator="1">1. Objetivo</div>
+            <div class="step" data-step-indicator="2">2. Nível</div>
+            <div class="step" data-step-indicator="3">3. Tecnologias</div>
+          </div>
+
+          <!-- Passo 1: objetivo -->
+          <section data-step="1">
+            <h3 style="margin-bottom:16px;">Qual é o seu objetivo?</h3>
+            <div class="option-grid" data-group="objetivo">
+              <button type="button" class="option-card" data-value="frontend">
+                <span class="opt-icon">🎨</span>
+                <h4>Front-end</h4>
+                <p>Criar interfaces e experiências web</p>
+              </button>
+              <button type="button" class="option-card" data-value="backend">
+                <span class="opt-icon">🗄️</span>
+                <h4>Back-end</h4>
+                <p>Construir APIs, regras de negócio e banco de dados</p>
+              </button>
+              <button type="button" class="option-card" data-value="fullstack">
+                <span class="opt-icon">🧩</span>
+                <h4>Full Stack</h4>
+                <p>Front-end e back-end juntos</p>
+              </button>
+            </div>
+          </section>
+
+          <!-- Passo 2: nível -->
+          <section data-step="2" hidden>
+            <h3 style="margin-bottom:16px;">Qual o seu nível atual?</h3>
+            <div class="option-grid" data-group="nivel">
+              <button type="button" class="option-card" data-value="iniciante">
+                <span class="opt-icon">🌱</span>
+                <h4>Iniciante</h4>
+                <p>Nunca programei ou estou começando agora</p>
+              </button>
+              <button type="button" class="option-card" data-value="intermediario">
+                <span class="opt-icon">⚡</span>
+                <h4>Intermediário</h4>
+                <p>Já entendo o básico e quero evoluir</p>
+              </button>
+              <button type="button" class="option-card" data-value="avancado">
+                <span class="opt-icon">🚀</span>
+                <h4>Avançado</h4>
+                <p>Já programo e quero me preparar para vagas</p>
+              </button>
+            </div>
+          </section>
+
+          <!-- Passo 3: tecnologias -->
+          <section data-step="3" hidden>
+            <h3 style="margin-bottom:16px;">Quais tecnologias você quer estudar?</h3>
+            <div class="tech-chip-grid" data-group="tecnologias">
+              <button type="button" class="tech-chip" data-value="HTML">HTML</button>
+              <button type="button" class="tech-chip" data-value="CSS">CSS</button>
+              <button type="button" class="tech-chip" data-value="JavaScript">JavaScript</button>
+              <button type="button" class="tech-chip" data-value="React">React</button>
+              <button type="button" class="tech-chip" data-value="Git">Git</button>
+              <button type="button" class="tech-chip" data-value="SQL">SQL</button>
+              <button type="button" class="tech-chip" data-value="Node.js">Node.js</button>
+            </div>
+          </section>
+
+          <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <button type="button" id="prevStep" class="btn btn-ghost" hidden>Voltar</button>
+            <button type="button" id="nextStep" class="btn btn-primary">Próximo →</button>
+            <button type="submit" id="generatePlan" class="btn btn-primary" hidden>Gerar plano com IA ✨</button>
+          </div>
+        </form>
+
+        <!-- ===== RESULTADO ===== -->
+        <div id="planResult" class="card card-block fade-up" hidden>
+          <div class="section-title">
+            <span>Seu cronograma de estudos</span>
+            <span class="badge badge-success">Gerado por IA</span>
+          </div>
+          <div class="path-track" id="planTrack"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script type="module" src="../assets/firebase-init.js"></script>
+<script type="module" src="../utils/authGuard.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/estudos.js"></script>
+  <script type="module" src="../assets/session.js"></script>
+</body>
+</html>
+

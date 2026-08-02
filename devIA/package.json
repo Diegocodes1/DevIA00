@@ -1,0 +1,14 @@
+{
+  "name": "devmentor-ai",
+  "version": "1.0.0",
+  "description": "DevMentor AI com Firebase Authentication e integração com OpenAI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.0",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.0"
+  }
+}
