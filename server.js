@@ -1,4 +1,5 @@
-equire('dotenv').config();
+
+require('dotenv').config();
  
 console.log('Chave carregada:', process.env.GEMINI_API_KEY ? 'SIM' : 'NÃO');
  
