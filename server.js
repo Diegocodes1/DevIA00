@@ -1,4 +1,4 @@
-require('dotenv').config();
+equire('dotenv').config();
  
 console.log('Chave carregada:', process.env.GEMINI_API_KEY ? 'SIM' : 'NÃO');
  
@@ -13,6 +13,8 @@ app.use(cors());
 app.use(express.json());
 // Servir arquivos estáticos (páginas, assets) a partir do diretório do projeto
 app.use(express.static(path.join(__dirname)));
+// Servir os arquivos do frontend que estão dentro de backend/ (firebase-init.js, auth.js, etc.)
+app.use('/backend', express.static(path.join(__dirname, 'backend')));
  
 function sanitizeMessage(message) {
   return String(message || '').trim().slice(0, 4000);
