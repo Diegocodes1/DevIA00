@@ -7,7 +7,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
-const { PDFParse } = require('pdf-parse');
+const pdfParse = require('pdf-parse');
  
 const app = express();
 app.use(cors());
@@ -90,9 +90,7 @@ app.post('/api/analisar-curriculo', upload.single('resume'), async (req, res) =>
  
   try {
     // Extrai o texto do PDF
-    const parser = new PDFParse({ data: req.file.buffer });
-    const dadosPdf = await parser.getText();
-    await parser.destroy();
+    const dadosPdf = await pdfParse(req.file.buffer);
     const textoCurriculo = dadosPdf.text.trim();
  
     if (!textoCurriculo) {
@@ -184,9 +182,7 @@ app.post('/api/gerar-curriculo-ats', upload.single('resume'), async (req, res) =
  
   try {
     // Extrai o texto do PDF
-    const parser = new PDFParse({ data: req.file.buffer });
-    const dadosPdf = await parser.getText();
-    await parser.destroy();
+    const dadosPdf = await pdfParse(req.file.buffer);
     const textoCurriculo = dadosPdf.text.trim();
  
     if (!textoCurriculo) {
