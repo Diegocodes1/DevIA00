@@ -267,6 +267,14 @@ ${textoCurriculo.slice(0, 6000)}
 });
  
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+ 
+// No Vercel, o servidor roda como função serverless (não precisa de app.listen).
+// Localmente, continua funcionando normal com node server.js.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
+  });
+}
+ 
+module.exports = app;
+ 
