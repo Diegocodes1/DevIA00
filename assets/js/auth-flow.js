@@ -1,5 +1,6 @@
-import { signIn, signUp, signInWithGoogle, resetPassword, onAuthStateChanged, signOutUser } from '../../firebase/auth.js';
 
+import { signIn, signUp, signInWithGoogle, resetPassword, onAuthStateChanged, signOutUser } from '../../backend/firebase/auth.js';
+ 
 let authForm;
 let authChecking;
 let authShell;
@@ -11,7 +12,7 @@ let logoutLink;
 let nameField;
 let nameGroup;
 let tabs;
-
+ 
 function initializeElements() {
   authForm = document.getElementById('authForm');
   authChecking = document.getElementById('authChecking');
@@ -25,17 +26,17 @@ function initializeElements() {
   nameGroup = nameField ? nameField.closest('.field-group') : null;
   tabs = document.querySelectorAll('.auth-tab');
 }
-
+ 
 let mode = 'login';
 let redirecting = false;
-
+ 
 const say = (msg) => { if (authStatus) authStatus.textContent = msg; };
 const label = () => (mode === 'signup' ? 'Criar conta' : 'Entrar');
 const busy = (isBusy) => {
   [submitButton, googleButton, resetButton].forEach((b) => { if (b) b.disabled = isBusy; });
   if (submitButton) submitButton.textContent = isBusy ? 'Aguarde...' : label();
 };
-
+ 
 function setMode(nextMode) {
   mode = nextMode === 'signup' ? 'signup' : 'login';
   tabs.forEach((tab) => {
@@ -48,23 +49,23 @@ function setMode(nextMode) {
   if (nameField) nameField.required = mode === 'signup';
   say(mode === 'signup' ? 'Preencha seus dados para criar a conta.' : 'Pronto para entrar.');
 }
-
+ 
 function getNextPage() {
   const params = new URLSearchParams(window.location.search);
   const next = params.get('next');
   if (!next) return 'dashboard.html';
-
+ 
   const safeList = new Set(['dashboard.html', 'chat.html', 'perfil.html', 'estudos.html', 'curriculo.html', 'entrevistas.html']);
   const cleanNext = next.split('?')[0].split('#')[0];
   return safeList.has(cleanNext) ? cleanNext : 'dashboard.html';
 }
-
+ 
 function goToDashboard() {
   if (redirecting) return;
   redirecting = true;
   window.location.href = getNextPage();
 }
-
+ 
 function describe(error) {
   const map = {
     'auth/invalid-email': 'E-mail inválido.',
@@ -80,13 +81,13 @@ function describe(error) {
   };
   return map[error && error.code] || (error && error.message) || 'Não foi possível completar a autenticação.';
 }
-
+ 
 function prefillFormFromQuery() {
   const params = new URLSearchParams(window.location.search);
   const email = params.get('email')?.trim();
   const password = params.get('password')?.trim();
   const displayName = params.get('displayName')?.trim();
-
+ 
   if (email && document.getElementById('email')) {
     document.getElementById('email').value = email;
   }
@@ -97,16 +98,16 @@ function prefillFormFromQuery() {
     nameField.value = displayName;
   }
 }
-
+ 
 async function handleAuthSubmit(event) {
   event.preventDefault();
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
   const name = nameField ? nameField.value.trim() : '';
-
+ 
   busy(true);
   say('Processando autenticação...');
-
+ 
   try {
     if (mode === 'signup') {
       await signUp(email, password, name);
@@ -119,11 +120,11 @@ async function handleAuthSubmit(event) {
     busy(false);
   }
 }
-
+ 
 async function handleGoogle() {
   busy(true);
   say('Abrindo login com Google...');
-
+ 
   try {
     await signInWithGoogle();
     goToDashboard();
@@ -132,14 +133,14 @@ async function handleGoogle() {
     busy(false);
   }
 }
-
+ 
 async function handleReset() {
   const email = document.getElementById('email').value.trim();
   if (!email) {
     say('Digite seu e-mail acima para receber o link de recuperação.');
     return;
   }
-
+ 
   busy(true);
   try {
     await resetPassword(email);
@@ -149,27 +150,27 @@ async function handleReset() {
   }
   busy(false);
 }
-
+ 
 document.addEventListener('DOMContentLoaded', () => {
   initializeElements();
-
+ 
   if (!authForm) {
     console.warn('Formulário de autenticação não encontrado.');
     return;
   }
-
+ 
   prefillFormFromQuery();
-
+ 
   onAuthStateChanged((user) => {
     if (user) {
       goToDashboard();
       return;
     }
-
+ 
     if (authChecking) authChecking.hidden = true;
     if (authShell) authShell.hidden = false;
   });
-
+ 
   tabs.forEach((tab) => tab.addEventListener('click', () => setMode(tab.dataset.authMode)));
   authForm.addEventListener('submit', handleAuthSubmit);
   if (googleButton) googleButton.addEventListener('click', handleGoogle);
@@ -181,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
       say('Sessão encerrada. Faça login novamente.');
     });
   }
-
+ 
   setMode('login');
 });
+ 
