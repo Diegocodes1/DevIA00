@@ -1,5 +1,7 @@
 # DevMentor AI
 
+CONTA DEMO PARA ACESSA O PROJETO: demo01@gmail.com senha:101010
+
 Plataforma que funciona como um mentor virtual de programação, ajudando estudantes e desenvolvedores iniciantes a estudar, montar currículo e treinar entrevistas técnicas.
 
 > Projeto de portfólio construído em **HTML5, CSS3 e JavaScript (ES6+)** puros, com arquitetura já pensada para evoluir para React + Node.js + Supabase + OpenAI API.
