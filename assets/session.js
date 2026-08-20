@@ -1,4 +1,4 @@
-import { onAuthStateChanged } from '../firebase/auth.js';
+import { onAuthStateChanged } from '../backend/firebase/auth.js';
 
 onAuthStateChanged((user) => {
   const name = document.getElementById('sidebarName');
