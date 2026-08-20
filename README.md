@@ -1,5 +1,5 @@
 # DevMentor AI
-
+RODE O PROJETO NO NODE SERVER.JS. POIS NETLIFY TA SEM SALDO PARA ATUALIZAR O PROJETO.
 CONTA DEMO PARA ACESSA O PROJETO: demo01@gmail.com senha:101010
 
 Plataforma que funciona como um mentor virtual de programação, ajudando estudantes e desenvolvedores iniciantes a estudar, montar currículo e treinar entrevistas técnicas.
