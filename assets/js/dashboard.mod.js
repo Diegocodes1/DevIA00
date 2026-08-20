@@ -1,4 +1,4 @@
-import { onAuthStateChanged } from '../../firebase/auth.js';
+import { onAuthStateChanged } from '../../backend/firebase/auth.js';
 
 function getDisplayName(user) {
   const emailName = user?.email?.split('@')[0] || 'Usuário';
