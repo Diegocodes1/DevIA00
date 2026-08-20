@@ -3,6 +3,13 @@ import { getProgress } from '../../backend/firebase/firestore.js';
 
 const ICONE_POR_TIPO = { chat: '💬', curriculo: '📄', curriculo_ats: '📄', entrevista: '🎯' };
 
+function getDiaChaveLocal(date) {
+  const ano = date.getFullYear();
+  const mes = String(date.getMonth() + 1).padStart(2, '0');
+  const dia = String(date.getDate()).padStart(2, '0');
+  return `${ano}-${mes}-${dia}`;
+}
+
 function getDisplayName(user) {
   const emailName = user?.email?.split('@')[0] || 'Usuário';
   const fallback = user?.displayName?.trim() || emailName;
@@ -38,10 +45,10 @@ function calcularStreak(diasEstudados) {
 
   let streak = 0;
   const cursor = new Date();
-  if (!dias.has(cursor.toISOString().slice(0, 10))) {
+  if (!dias.has(getDiaChaveLocal(cursor))) {
     cursor.setDate(cursor.getDate() - 1);
   }
-  while (dias.has(cursor.toISOString().slice(0, 10))) {
+  while (dias.has(getDiaChaveLocal(cursor))) {
     streak += 1;
     cursor.setDate(cursor.getDate() - 1);
   }
@@ -95,7 +102,7 @@ function renderCalendario(diasEstudados) {
   const mes = hoje.getMonth();
   const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
   const totalDias = new Date(ano, mes + 1, 0).getDate();
-  const hojeChave = hoje.toISOString().slice(0, 10);
+  const hojeChave = getDiaChaveLocal(hoje);
 
   let html = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((l) => `<span class="cal-label">${l}</span>`).join('');
   for (let i = 0; i < primeiroDiaSemana; i += 1) html += '<span class="cal-day empty"></span>';
