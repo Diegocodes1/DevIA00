@@ -1,15 +1,5 @@
-import { auth } from '../../firebase/auth.js';
-import { getUserProfile, updateUserProfile } from '../../firebase/firestore.js';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyC6oefyAK_tYdJT5WjDZbuL3KHJRO0U8rg',
-  authDomain: 'devmentorai-fa135.firebaseapp.com',
-  projectId: 'devmentorai-fa135',
-  storageBucket: 'devmentorai-fa135.firebasestorage.app',
-  messagingSenderId: '635119831471',
-  appId: '1:635119831471:web:1ab95b1f573c65e5d4075a',
-  measurementId: 'G-E8Z7DX5F75'
-};
+import { auth, onAuthStateChanged } from '../../backend/firebase/auth.js';
+import { getUserProfile, updateUserProfile, getProgress } from '../../backend/firebase/firestore.js';
 
 function initProfileTabs() {
   const tabs = document.querySelectorAll('.profile-tab');
@@ -38,14 +28,48 @@ function getInitials(name) {
     .toUpperCase() || 'U';
 }
 
-function renderProfile(user, profileData) {
+function calcularHorasEstimadas(activities) {
+  const MINUTOS = { chat: 4, curriculo: 15, curriculo_ats: 10, entrevista: 20 };
+  const totalMinutos = (activities || []).reduce((soma, a) => soma + (MINUTOS[a.tipo] || 5), 0);
+  return totalMinutos / 60;
+}
+
+function getDiaChaveLocal(date) {
+  const ano = date.getFullYear();
+  const mes = String(date.getMonth() + 1).padStart(2, '0');
+  const dia = String(date.getDate()).padStart(2, '0');
+  return `${ano}-${mes}-${dia}`;
+}
+
+function calcularStreak(diasEstudados) {
+  const dias = new Set(diasEstudados || []);
+  if (dias.size === 0) return 0;
+
+  let streak = 0;
+  const cursor = new Date();
+  if (!dias.has(getDiaChaveLocal(cursor))) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  while (dias.has(getDiaChaveLocal(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
+function renderProfile(user, profileData, progressData) {
   const name = profileData?.nome || user?.displayName || user?.email?.split('@')[0] || 'Usuário';
   const email = profileData?.email || user?.email || '';
   const level = profileData?.nivel || 'Iniciante';
-  const hours = profileData?.horasEstudadas || 0;
-  const projects = profileData?.projetosConcluidos || 0;
-  const streak = profileData?.streak || 0;
-  const progress = Math.min(100, Math.max(10, (hours / 20) * 100));
+
+  const activities = progressData?.activities || [];
+  const diasEstudados = progressData?.diasEstudados || [];
+
+  const hours = calcularHorasEstimadas(activities);
+  const streak = calcularStreak(diasEstudados);
+  const projects = activities.filter((a) => a.tipo === 'curriculo' || a.tipo === 'curriculo_ats').length;
+  const interviews = activities.filter((a) => a.tipo === 'entrevista').length;
+  const progress = Math.min(100, Math.round((activities.length / 40) * 100));
 
   document.getElementById('sidebarName').textContent = name;
   document.getElementById('sidebarRole').textContent = level;
@@ -53,11 +77,15 @@ function renderProfile(user, profileData) {
   document.getElementById('profileAvatar').textContent = getInitials(name);
   document.getElementById('profileName').textContent = name;
   document.getElementById('profileSummary').innerHTML = `${email || 'Seu e-mail'} · <span class="badge">${level}</span>`;
-  document.getElementById('profileProgressText').textContent = `${Math.round(progress)}% do caminho para um próximo nível concluído`;
-  document.getElementById('profileHours').textContent = `${hours}h`;
+  document.getElementById('profileProgressText').textContent = activities.length
+    ? `${progress}% do caminho, com base em ${activities.length} atividades registradas`
+    : 'Nenhuma atividade ainda — use o chat, analise um currículo ou simule uma entrevista';
+  document.querySelector('.progress-fill').style.width = `${progress}%`;
+  document.querySelector('.progress-fill').setAttribute('data-value', progress);
+  document.getElementById('profileHours').textContent = `${hours.toFixed(1).replace('.0', '')}h`;
   document.getElementById('profileProjects').textContent = projects;
-  document.getElementById('profileInterviews').textContent = profileData?.entrevistasRealizadas || 0;
-  document.getElementById('profileStreak').textContent = `${streak} dias`;
+  document.getElementById('profileInterviews').textContent = interviews;
+  document.getElementById('profileStreak').textContent = `${streak} ${streak === 1 ? 'dia' : 'dias'}`;
 
   document.getElementById('cfgName').value = name;
   document.getElementById('cfgEmail').value = email;
@@ -68,8 +96,12 @@ async function loadProfile() {
   const user = auth.currentUser;
   if (!user) return;
 
-  const profileData = await getUserProfile(user.uid);
-  renderProfile(user, profileData || {});
+  const [profileData, progressData] = await Promise.all([
+    getUserProfile(user.uid),
+    getProgress(user.uid)
+  ]);
+
+  renderProfile(user, profileData || {}, progressData || {});
 }
 
 async function saveProfile() {
@@ -87,11 +119,7 @@ async function saveProfile() {
   };
 
   await updateUserProfile(user.uid, payload);
-  renderProfile(user, {
-    nome: name || user.displayName || 'Usuário',
-    email: email || user.email || '',
-    nivel: level
-  });
+  await loadProfile();
 
   if (window.showToast) {
     window.showToast('Perfil atualizado com sucesso!', 'success');
