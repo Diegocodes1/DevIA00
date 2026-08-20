@@ -32,7 +32,6 @@ function updateUserUI(user) {
   if (greeting) greeting.textContent = `Olá, ${displayName} 👋`;
 }
 
-  const safeState = state || {
 function calcularStreak(diasEstudados) {
   const dias = new Set(diasEstudados || []);
   if (dias.size === 0) return 0;
