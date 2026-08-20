@@ -54,23 +54,23 @@
         <div class="stat-grid fade-up">
           <div class="card stat-card">
             <span class="stat-label">Progresso geral</span>
-            <span class="stat-value" id="progressValue">62%</span>
-            <div class="progress"><div class="progress-fill" id="progressBar" data-value="62"></div></div>
+            <span class="stat-value" id="progressValue">0%</span>
+            <div class="progress"><div class="progress-fill" id="progressBar" data-value="0"></div></div>
           </div>
           <div class="card stat-card">
             <span class="stat-label">Horas estudadas</span>
-            <span class="stat-value" id="hoursValue">48h</span>
-            <span class="stat-delta" id="hoursDelta">+6h esta semana</span>
+            <span class="stat-value" id="hoursValue">0h</span>
+            <span class="stat-delta" id="hoursDelta">carregando...</span>
           </div>
           <div class="card stat-card">
             <span class="stat-label">Projetos concluídos</span>
-            <span class="stat-value" id="projectsValue">7</span>
-            <span class="stat-delta" id="projectsDelta">+1 este mês</span>
+            <span class="stat-value" id="projectsValue">0</span>
+            <span class="stat-delta" id="projectsDelta">carregando...</span>
           </div>
           <div class="card stat-card">
             <span class="stat-label">Sequência de estudos</span>
-            <span class="stat-value" id="streakValue">9 dias</span>
-            <span class="stat-delta" id="streakDelta">recorde pessoal: 14</span>
+            <span class="stat-value" id="streakValue">0 dias</span>
+            <span class="stat-delta" id="streakDelta">carregando...</span>
           </div>
         </div>
 
@@ -128,26 +128,7 @@
             <div class="card card-block">
               <div class="section-title"><span>Últimas atividades</span></div>
               <ul class="activity-list">
-                <li class="activity-item">
-                  <span class="activity-icon">✓</span>
-                  <div class="activity-text"><strong>Desafio "CRUD com React" concluído</strong><p>Projeto avaliado com nota 8.5/10</p></div>
-                  <span class="activity-time">hoje</span>
-                </li>
-                <li class="activity-item">
-                  <span class="activity-icon">💬</span>
-                  <div class="activity-text"><strong>Conversa sobre "hooks customizados"</strong><p>12 mensagens trocadas com o mentor</p></div>
-                  <span class="activity-time">ontem</span>
-                </li>
-                <li class="activity-item">
-                  <span class="activity-icon">🎯</span>
-                  <div class="activity-text"><strong>Simulado de entrevista — React</strong><p>Pontuação: 74/100</p></div>
-                  <span class="activity-time">há 2 dias</span>
-                </li>
-                <li class="activity-item">
-                  <span class="activity-icon">📄</span>
-                  <div class="activity-text"><strong>Currículo reanalisado</strong><p>Nota subiu de 61 para 78</p></div>
-                  <span class="activity-time">há 4 dias</span>
-                </li>
+                <li class="activity-item"><div class="activity-text"><p>Carregando atividades...</p></div></li>
               </ul>
             </div>
           </div>
@@ -176,16 +157,7 @@
 
             <div class="card card-block">
               <div class="section-title"><span>Calendário de estudos</span></div>
-              <div class="calendar">
-                <span class="cal-label">D</span><span class="cal-label">S</span><span class="cal-label">T</span>
-                <span class="cal-label">Q</span><span class="cal-label">Q</span><span class="cal-label">S</span><span class="cal-label">S</span>
-                <span class="cal-day empty"></span><span class="cal-day empty"></span>
-                <span class="cal-day studied">1</span><span class="cal-day studied">2</span>
-                <span class="cal-day studied">3</span><span class="cal-day">4</span><span class="cal-day studied">5</span>
-                <span class="cal-day studied">6</span><span class="cal-day studied">7</span>
-                <span class="cal-day studied">8</span><span class="cal-day studied">9</span>
-                <span class="cal-day today">10</span><span class="cal-day">11</span><span class="cal-day">12</span>
-              </div>
+              <div class="calendar" id="studyCalendar"></div>
             </div>
 
             <div class="card card-block">
@@ -213,4 +185,3 @@
   <script type="module" src="../assets/session.js"></script>
 </body>
 </html>
-

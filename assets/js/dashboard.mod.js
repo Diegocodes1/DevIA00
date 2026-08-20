@@ -1,4 +1,7 @@
 import { onAuthStateChanged } from '../../backend/firebase/auth.js';
+import { getProgress } from '../../backend/firebase/firestore.js';
+
+const ICONE_POR_TIPO = { chat: '💬', curriculo: '📄', curriculo_ats: '📄', entrevista: '🎯' };
 
 function getDisplayName(user) {
   const emailName = user?.email?.split('@')[0] || 'Usuário';
@@ -21,12 +24,7 @@ function updateUserUI(user) {
   }
 
   const displayName = getDisplayName(user);
-  const initials = displayName
-    .split(' ')
-    .slice(0, 2)
-    .map((part) => part[0] || '')
-    .join('')
-    .toUpperCase() || 'U';
+  const initials = displayName.split(' ').slice(0, 2).map((p) => p[0] || '').join('').toUpperCase() || 'U';
 
   if (sidebarName) sidebarName.textContent = displayName;
   if (sidebarRole) sidebarRole.textContent = user.email || 'Usuário autenticado';
@@ -34,53 +32,113 @@ function updateUserUI(user) {
   if (greeting) greeting.textContent = `Olá, ${displayName} 👋`;
 }
 
-function renderProgress(state) {
   const safeState = state || {
-    progress: 42,
-    hoursStudied: 12,
-    projectsCompleted: 2,
-    streakDays: 4
-  };
-  const progressValue = document.getElementById('progressValue');
-  const progressBar = document.getElementById('progressBar');
-  const hoursValue = document.getElementById('hoursValue');
-  const hoursDelta = document.getElementById('hoursDelta');
-  const projectsValue = document.getElementById('projectsValue');
-  const projectsDelta = document.getElementById('projectsDelta');
-  const streakValue = document.getElementById('streakValue');
-  const streakDelta = document.getElementById('streakDelta');
+function calcularStreak(diasEstudados) {
+  const dias = new Set(diasEstudados || []);
+  if (dias.size === 0) return 0;
 
-  if (progressValue) progressValue.textContent = `${Math.round(safeState.progress)}%`;
-  if (progressBar) {
-    progressBar.setAttribute('data-value', Math.round(safeState.progress));
-    progressBar.style.width = `${Math.round(safeState.progress)}%`;
+  let streak = 0;
+  const cursor = new Date();
+  if (!dias.has(cursor.toISOString().slice(0, 10))) {
+    cursor.setDate(cursor.getDate() - 1);
   }
-  if (hoursValue) hoursValue.textContent = `${safeState.hoursStudied.toFixed(1).replace('.0', '')}h`;
-  if (hoursDelta) hoursDelta.textContent = `+${Math.max(1, Math.round(safeState.hoursStudied / 2))}h esta semana`;
-  if (projectsValue) projectsValue.textContent = `${Math.round(safeState.projectsCompleted)}`;
-  if (projectsDelta) projectsDelta.textContent = `+${Math.max(1, Math.round(safeState.projectsCompleted / 3))} este mês`;
-  if (streakValue) streakValue.textContent = `${safeState.streakDays} dias`;
-  if (streakDelta) streakDelta.textContent = `recorde pessoal: ${Math.max(safeState.streakDays + 3, 14)}`;
+  while (dias.has(cursor.toISOString().slice(0, 10))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
 
-  const greeting = document.getElementById('dashboardGreeting');
-  if (greeting) {
-    const message = safeState.progress >= 80
-      ? 'Você está muito perto de dominar o básico. Continue assim!'
-      : safeState.progress >= 50
-        ? 'Você já construiu uma boa base. Continue evoluindo.'
-        : 'Cada interação ajuda a acelerar seu progresso.';
-    greeting.nextElementSibling.textContent = message;
+function calcularHorasEstimadas(activities) {
+  const MINUTOS = { chat: 4, curriculo: 15, curriculo_ats: 10, entrevista: 20 };
+  const totalMinutos = (activities || []).reduce((soma, a) => soma + (MINUTOS[a.tipo] || 5), 0);
+  return totalMinutos / 60;
+}
+
+function tempoRelativo(isoDate) {
+  const diffMin = Math.round((Date.now() - new Date(isoDate).getTime()) / 60000);
+  if (diffMin < 1) return 'agora mesmo';
+  if (diffMin < 60) return `há ${diffMin} min`;
+  const diffH = Math.round(diffMin / 60);
+  if (diffH < 24) return diffH === 1 ? 'há 1 hora' : `há ${diffH} horas`;
+  const diffDias = Math.round(diffH / 24);
+  return diffDias === 1 ? 'ontem' : `há ${diffDias} dias`;
+}
+
+function renderAtividades(activities) {
+  const lista = document.querySelector('.activity-list');
+  if (!lista) return;
+
+  if (!activities || activities.length === 0) {
+    lista.innerHTML = '<li class="activity-item"><div class="activity-text"><p>Nenhuma atividade ainda. Use o chat, analise um currículo ou simule uma entrevista para começar.</p></div></li>';
+    return;
   }
+
+  lista.innerHTML = activities.slice(0, 4).map((a) => `
+    <li class="activity-item">
+      <span class="activity-icon">${ICONE_POR_TIPO[a.tipo] || '•'}</span>
+      <div class="activity-text">
+        <strong>${a.titulo}</strong>
+        ${a.descricao ? `<p>${a.descricao}</p>` : ''}
+      </div>
+      <span class="activity-time">${tempoRelativo(a.data)}</span>
+    </li>
+  `).join('');
+}
+
+function renderCalendario(diasEstudados) {
+  const container = document.getElementById('studyCalendar');
+  if (!container) return;
+
+  const dias = new Set(diasEstudados || []);
+  const hoje = new Date();
+  const ano = hoje.getFullYear();
+  const mes = hoje.getMonth();
+  const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
+  const totalDias = new Date(ano, mes + 1, 0).getDate();
+  const hojeChave = hoje.toISOString().slice(0, 10);
+
+  let html = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((l) => `<span class="cal-label">${l}</span>`).join('');
+  for (let i = 0; i < primeiroDiaSemana; i += 1) html += '<span class="cal-day empty"></span>';
+
+  for (let dia = 1; dia <= totalDias; dia += 1) {
+    const chave = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+    const classes = ['cal-day'];
+    if (dias.has(chave)) classes.push('studied');
+    if (chave === hojeChave) classes.push('today');
+    html += `<span class="${classes.join(' ')}">${dia}</span>`;
+  }
+
+  container.innerHTML = html;
+}
+
+async function renderProgressoReal(uid) {
+  const progresso = await getProgress(uid);
+  const activities = progresso?.activities || [];
+  const diasEstudados = progresso?.diasEstudados || [];
+
+  const horas = calcularHorasEstimadas(activities);
+  const streak = calcularStreak(diasEstudados);
+  const projetosConcluidos = activities.filter((a) => a.tipo === 'curriculo' || a.tipo === 'curriculo_ats' || a.tipo === 'entrevista').length;
+  const progressoPercentual = Math.min(100, Math.round((activities.length / 40) * 100));
+
+  const el = (id) => document.getElementById(id);
+  if (el('progressValue')) el('progressValue').textContent = `${progressoPercentual}%`;
+  if (el('progressBar')) { el('progressBar').setAttribute('data-value', progressoPercentual); el('progressBar').style.width = `${progressoPercentual}%`; }
+  if (el('hoursValue')) el('hoursValue').textContent = `${horas.toFixed(1).replace('.0', '')}h`;
+  if (el('hoursDelta')) el('hoursDelta').textContent = activities.length ? `${activities.length} atividades registradas` : 'nenhuma atividade ainda';
+  if (el('projectsValue')) el('projectsValue').textContent = `${projetosConcluidos}`;
+  if (el('projectsDelta')) el('projectsDelta').textContent = projetosConcluidos ? 'currículos e entrevistas' : 'nenhum ainda';
+  if (el('streakValue')) el('streakValue').textContent = `${streak} ${streak === 1 ? 'dia' : 'dias'}`;
+  if (el('streakDelta')) el('streakDelta').textContent = streak > 0 ? 'continue assim!' : 'comece hoje';
+
+  renderCalendario(diasEstudados);
+  renderAtividades(activities);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  onAuthStateChanged((user) => updateUserUI(user));
-
-  if (window.devmentorProgress) {
-    window.devmentorProgress.loadState();
-    renderProgress(window.devmentorProgress.getState());
-    window.addEventListener('devmentor:progress-updated', (event) => {
-      renderProgress(event.detail);
-    });
-  }
+  onAuthStateChanged((user) => {
+    updateUserUI(user);
+    if (user) renderProgressoReal(user.uid);
+  });
 });
