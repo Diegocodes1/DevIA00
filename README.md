@@ -8,12 +8,16 @@ Plataforma que funciona como um mentor virtual de programação, ajudando estuda
 
 ## Como abrir
 
-Não há build nem dependências — é só abrir no navegador:
+O projeto usa o servidor Express para servir as páginas, proteger as rotas e disponibilizar as APIs de chat e análise de currículo:
 
-1. Abra `index.html` para ver a landing page.
-2. Navegue até `pages/dashboard.html` para explorar a área logada (fluxo simulado, sem autenticação real).
+```bash
+npm install
+npm start
+```
 
-Para melhor experiência (evita bloqueios de `file://` em alguns navegadores), sirva a pasta com um servidor local, por exemplo:
+Depois, acesse `http://localhost:3000/`. A autenticação é feita pelo Firebase; páginas dentro de `pages/` redirecionam para `pages/login.html` quando não existe uma sessão válida.
+
+Para testar somente a interface estática, também é possível servir a pasta com outro servidor local (não use `file://`, pois os módulos do Firebase precisam de HTTP):
 
 ```bash
 npx serve .
@@ -51,7 +55,7 @@ python3 -m http.server 5500
 
 | Fase | Entrega |
 |---|---|
-| v1 (atual) | HTML/CSS/JS estático, fluxos simulados no front-end |
+| v1 (atual) | HTML/CSS/JS estático, autenticação Firebase e APIs Express |
 | v2 | Migração da UI para **React** (componentizar sidebar, cards, chat) |
 | v3 | Back-end em **Node.js** + banco **PostgreSQL/Supabase**, autenticação real |
 | v4 | Integração com a **OpenAI API** para respostas reais do mentor, análise de currículo e geração de planos de estudo |
@@ -59,4 +63,4 @@ python3 -m http.server 5500
 
 ## Observação
 
-Todos os dados exibidos (usuário "João Silva", mensagens do chat, notas de currículo, feedbacks de entrevista) são **fictícios**, usados apenas para demonstrar a interface e o fluxo de uso.
+As perguntas de entrevista e alguns textos iniciais são demonstrativos. O perfil, a sessão e o progresso do usuário autenticado são carregados do Firebase; o chat e a análise de currículo usam as APIs do servidor quando configuradas.

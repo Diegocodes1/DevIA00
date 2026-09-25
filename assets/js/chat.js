@@ -4,11 +4,11 @@
  * As mensagens vão para o backend local (server/), que guarda a chave da IA.
  */
  
-import { getCurrentUser, onAuthStateChanged } from '../../firebase/auth.js';
-import { db } from '../../firebase/firestore.js';
+import { getCurrentUser, onAuthStateChanged } from '../../backend/firebase/auth.js';
+import { db } from '../../backend/firebase/firestore.js';
 import { collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
  
-const API_URL = 'http://localhost:3000/api/chat';
+const API_URL = '/api/chat';
 const HISTORY_LIMIT = 10;
  
 const history = [];

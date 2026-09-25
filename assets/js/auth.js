@@ -1,4 +1,4 @@
-import { signIn, signUp, signInWithGoogle, resetPassword, onAuthStateChanged, signOutUser } from '../../firebase/auth.js';
+import { signIn, signUp, signInWithGoogle, resetPassword, onAuthStateChanged, signOutUser } from '../../backend/firebase/auth.js';
 
 let authForm;
 let authChecking;
