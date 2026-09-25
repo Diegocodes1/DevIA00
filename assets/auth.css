@@ -128,6 +128,21 @@ html, body { min-height: 100%; }
 
 .auth-status { min-height: 22px; margin: 0; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--auth-border); background: var(--auth-surface); color: var(--auth-muted); text-align: center; font-size: 0.9rem; }
 
+.demo-access {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(var(--color-accent-rgb), 0.35);
+  border-radius: var(--radius-md);
+  background: rgba(var(--color-accent-rgb), 0.06);
+}
+.demo-access strong { color: var(--auth-text); }
+.demo-access p { margin: 5px 0 0; color: var(--auth-muted); font-size: 0.86rem; line-height: 1.5; }
+.demo-access dl { display: grid; gap: 5px; margin: 12px 0 0; font-size: 0.84rem; }
+.demo-access dl div { display: flex; justify-content: space-between; gap: 12px; }
+.demo-access dt { color: var(--auth-muted); }
+.demo-access dd { margin: 0; color: var(--auth-text); font-family: 'JetBrains Mono', monospace; }
+
 .auth-hint { margin: 8px 0 0; font-size: 0.84rem; line-height: 1.7; text-align: center; color: rgba(231,238,246,0.68); }
 .auth-hint a { color: var(--auth-primary); text-decoration: underline; }
 .auth-hint a:hover { color: var(--auth-primary-soft); }

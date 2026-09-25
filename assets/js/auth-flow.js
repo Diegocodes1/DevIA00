@@ -9,6 +9,7 @@ let submitButton;
 let googleButton;
 let resetButton;
 let logoutLink;
+let demoLoginButton;
 let nameField;
 let nameGroup;
 let tabs;
@@ -22,6 +23,7 @@ function initializeElements() {
   googleButton = document.getElementById('googleButton');
   resetButton = document.getElementById('resetPasswordButton');
   logoutLink = document.getElementById('forceLogoutLink');
+  demoLoginButton = document.getElementById('demoLoginButton');
   nameField = document.getElementById('displayName');
   nameGroup = nameField ? nameField.closest('.field-group') : null;
   tabs = document.querySelectorAll('.auth-tab');
@@ -33,9 +35,17 @@ let redirecting = false;
 const say = (msg) => { if (authStatus) authStatus.textContent = msg; };
 const label = () => (mode === 'signup' ? 'Criar conta' : 'Entrar');
 const busy = (isBusy) => {
-  [submitButton, googleButton, resetButton].forEach((b) => { if (b) b.disabled = isBusy; });
+  [submitButton, googleButton, resetButton, demoLoginButton].forEach((b) => { if (b) b.disabled = isBusy; });
   if (submitButton) submitButton.textContent = isBusy ? 'Aguarde...' : label();
 };
+
+function fillDemoCredentials() {
+  setMode('login');
+  document.getElementById('email').value = 'demo01@gmail.com';
+  document.getElementById('password').value = '101010';
+  say('Credenciais demo preenchidas. Entrando...');
+  authForm.requestSubmit();
+}
  
 function setMode(nextMode) {
   mode = nextMode === 'signup' ? 'signup' : 'login';
@@ -175,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
   authForm.addEventListener('submit', handleAuthSubmit);
   if (googleButton) googleButton.addEventListener('click', handleGoogle);
   if (resetButton) resetButton.addEventListener('click', handleReset);
+  if (demoLoginButton) demoLoginButton.addEventListener('click', fillDemoCredentials);
   if (logoutLink) {
     logoutLink.addEventListener('click', async (event) => {
       event.preventDefault();
