@@ -17,6 +17,18 @@ npm start
 
 Depois, acesse `http://localhost:3000/`. A autenticação é feita pelo Firebase; páginas dentro de `pages/` redirecionam para `pages/login.html` quando não existe uma sessão válida.
 
+### Deploy na Netlify
+
+O projeto inclui `netlify.toml` e uma Netlify Function para executar as rotas Express da API. Publique o repositório na Netlify usando estas configurações:
+
+- **Build command:** `npm install`
+- **Publish directory:** `.`
+- **Functions directory:** `netlify/functions`
+
+Configure `GEMINI_API_KEY` nas variáveis de ambiente do site para habilitar o chat e a análise de currículo. O arquivo `.env` é apenas local e não deve ser enviado ao repositório.
+
+As rotas `/api/*` são encaminhadas automaticamente para a função serverless. As páginas e os arquivos estáticos continuam sendo publicados diretamente pela Netlify.
+
 Para testar somente a interface estática, também é possível servir a pasta com outro servidor local (não use `file://`, pois os módulos do Firebase precisam de HTTP):
 
 ```bash

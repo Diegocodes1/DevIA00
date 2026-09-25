@@ -1,3 +1,5 @@
 .env
 node_modules
-backend
+
+# O backend contém módulos públicos do Firebase usados pelo frontend.
+# Arquivos secretos continuam protegidos pelo .env acima.
